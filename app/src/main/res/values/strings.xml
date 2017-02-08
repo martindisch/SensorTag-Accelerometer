@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Accelerometer</string>
+    <string name="no_ble">BLE not supported on this device</string>
+    <string name="state_off">Bluetooth disabled</string>
 </resources>
