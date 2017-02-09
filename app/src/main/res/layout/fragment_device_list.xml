@@ -9,4 +9,4 @@
     android:scrollbars="vertical"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.martindisch.accelerometer.ScanFragment"
-    tools:listitem="@layout/fragment_device" />
+    tools:listitem="@layout/device_item" />

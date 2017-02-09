@@ -181,6 +181,6 @@ public class ScanFragment extends Fragment {
      * Interface for {@link DeviceRecyclerViewAdapter} callbacks.
      */
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(int position);
+        void onListFragmentInteraction(String address);
     }
 }

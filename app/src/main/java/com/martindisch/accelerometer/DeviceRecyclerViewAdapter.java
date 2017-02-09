@@ -24,7 +24,7 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_device, parent, false);
+                .inflate(R.layout.device_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -36,7 +36,7 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.getAdapterPosition());
+                    mListener.onListFragmentInteraction(mAddresses.get(position));
                 }
             }
         });

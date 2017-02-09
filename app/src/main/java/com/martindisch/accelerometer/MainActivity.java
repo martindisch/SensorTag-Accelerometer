@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements ScanFragment.OnLi
     }
 
     @Override
-    public void onListFragmentInteraction(int position) {
+    public void onListFragmentInteraction(String address) {
         // TODO: switch to details fragment
     }
 }
