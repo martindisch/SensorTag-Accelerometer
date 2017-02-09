@@ -120,14 +120,8 @@ public class ScanFragment extends Fragment {
 
     @Override
     public void onPause() {
+        stopScan();
         super.onPause();
-        stopScan();
-    }
-
-    @Override
-    public void onDestroy() {
-        stopScan();
-        super.onDestroy();
     }
 
     @Override
