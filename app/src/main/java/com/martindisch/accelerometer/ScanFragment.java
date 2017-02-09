@@ -95,6 +95,7 @@ public class ScanFragment extends Fragment {
      * Initiates the scan for BLE devices according to the API level.
      */
     private void startScan() {
+        mListener.onStartScan();
         if (Build.VERSION.SDK_INT < 21) {
             mBluetoothAdapter.startLeScan(mLeScanCallback);
         } else {
@@ -109,6 +110,7 @@ public class ScanFragment extends Fragment {
      * Stops the scan using the proper functions for the API level.
      */
     private void stopScan() {
+        mListener.onStopScan();
         if (mBluetoothAdapter.isEnabled()) {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -128,15 +130,12 @@ public class ScanFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
-
-        // prepare RecyclerView and set adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            mRecyclerViewAdapter = new DeviceRecyclerViewAdapter(mListener);
-            recyclerView.setAdapter(mRecyclerViewAdapter);
-        }
+        Context context = view.getContext();
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        mRecyclerViewAdapter = new DeviceRecyclerViewAdapter(mListener);
+        recyclerView.setAdapter(mRecyclerViewAdapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null, true));
         return view;
     }
 
@@ -176,5 +175,9 @@ public class ScanFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(String address);
+
+        void onStartScan();
+
+        void onStopScan();
     }
 }

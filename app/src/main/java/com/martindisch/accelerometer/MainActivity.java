@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -12,11 +14,16 @@ public class MainActivity extends AppCompatActivity implements ScanFragment.OnLi
 
     private Fragment mCurrentFragment;
     private FragmentManager mFragmentManager;
+    private SwipeRefreshLayout mSwipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mSwipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        mSwipeContainer.setEnabled(false);
+        mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
 
         // exit if the device doesn't have BLE
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -38,5 +45,15 @@ public class MainActivity extends AppCompatActivity implements ScanFragment.OnLi
         transaction.replace(R.id.container, mCurrentFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onStartScan() {
+        mSwipeContainer.setRefreshing(true);
+    }
+
+    @Override
+    public void onStopScan() {
+        mSwipeContainer.setRefreshing(false);
     }
 }
