@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme">
         <!-- android:configChanges should not be used, but in this case it's fine
              because we use the same layout for portrait and landscape -->
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
