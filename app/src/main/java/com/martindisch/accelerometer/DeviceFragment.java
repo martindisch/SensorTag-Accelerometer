@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.UUID;
@@ -30,6 +31,8 @@ public class DeviceFragment extends Fragment {
     private BluetoothGatt mGatt;
     private BluetoothGattService mTempService;
     private BluetoothGattCharacteristic mRead;
+
+    private TextView mHex;
 
     /**
      * Mandatory empty constructor.
@@ -130,7 +133,13 @@ public class DeviceFragment extends Fragment {
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
-            Log.e("FFF", "Read: " + bytesToHex(characteristic.getValue()));
+            final String text = "0x" + bytesToHex(characteristic.getValue());
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mHex.setText(text);
+                }
+            });
             mGatt.readCharacteristic(mRead);
         }
     };
@@ -155,7 +164,9 @@ public class DeviceFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_device, container, false);
+        View layout = inflater.inflate(R.layout.fragment_device, container, false);
+        mHex = (TextView) layout.findViewById(R.id.tvHex);
+        return layout;
     }
 
 }
