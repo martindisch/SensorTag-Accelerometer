@@ -108,6 +108,10 @@ public class DeviceFragment extends Fragment {
             super.onServicesDiscovered(gatt, status);
             mTempService = mGatt.getService(UUID.fromString("F000AA00-0451-4000-B000-000000000000"));
             BluetoothGattCharacteristic enable = mTempService.getCharacteristic(UUID.fromString("F000AA02-0451-4000-B000-000000000000"));
+            if (enable == null) {
+                Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
+                getActivity().finish();
+            }
             enable.setValue(0x01, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
             mGatt.writeCharacteristic(enable);
         }
@@ -116,6 +120,10 @@ public class DeviceFragment extends Fragment {
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
             mRead = mTempService.getCharacteristic(UUID.fromString("F000AA01-0451-4000-B000-000000000000"));
+            if (mRead == null) {
+                Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
+                getActivity().finish();
+            }
             mGatt.readCharacteristic(mRead);
         }
 

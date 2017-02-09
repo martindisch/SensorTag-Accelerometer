@@ -2,4 +2,6 @@
     <string name="app_name">Accelerometer</string>
     <string name="no_ble">BLE not supported on this device</string>
     <string name="state_off">Bluetooth disabled</string>
+    <string name="service_not_found">GATT service not found - incompatible device</string>
+    <string name="characteristic_not_found">GATT characteristic not found - incompatible device</string>
 </resources>
