@@ -4,4 +4,8 @@
     <string name="state_off">Bluetooth disabled</string>
     <string name="service_not_found">GATT service not found - incompatible device</string>
     <string name="characteristic_not_found">GATT characteristic not found - incompatible device</string>
+    <string name="acceleration">Acceleration</string>
+    <string name="xAxis">X: %.2f</string>
+    <string name="yAxis">Y: %.2f</string>
+    <string name="zAxis">Z: %.2f</string>
 </resources>

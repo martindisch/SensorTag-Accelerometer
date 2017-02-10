@@ -9,8 +9,38 @@
     tools:context="com.martindisch.accelerometer.DeviceFragment">
 
     <TextView
-        android:id="@+id/tvHex"
+        android:id="@+id/tvTitle"
+        style="@style/TextAppearance.AppCompat.Headline"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:text="@string/acceleration" />
+
+    <TextView
+        android:id="@+id/tvXAxis"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:text="@string/xAxis" />
+
+    <TextView
+        android:id="@+id/tvYAxis"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvXAxis"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:text="@string/yAxis" />
+
+    <TextView
+        android:id="@+id/tvZAxis"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvYAxis"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:text="@string/zAxis" />
 
 </RelativeLayout>

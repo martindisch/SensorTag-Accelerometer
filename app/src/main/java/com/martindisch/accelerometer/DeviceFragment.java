@@ -29,9 +29,9 @@ public class DeviceFragment extends Fragment {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mGatt;
     private BluetoothGattService mMovService;
-    private BluetoothGattCharacteristic mRead;
+    private BluetoothGattCharacteristic mRead, mEnable, mPeriod;
 
-    private TextView mHex;
+    private TextView mXAxis, mYAxis, mZAxis;
 
     /**
      * Mandatory empty constructor.
@@ -109,8 +109,8 @@ public class DeviceFragment extends Fragment {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
             mMovService = mGatt.getService(UUID.fromString("F000AA80-0451-4000-B000-000000000000"));
-            BluetoothGattCharacteristic enable = mMovService.getCharacteristic(UUID.fromString("F000AA82-0451-4000-B000-000000000000"));
-            if (enable == null) {
+            mEnable = mMovService.getCharacteristic(UUID.fromString("F000AA82-0451-4000-B000-000000000000"));
+            if (mEnable == null) {
                 Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
                 getActivity().finish();
             }
@@ -127,30 +127,43 @@ public class DeviceFragment extends Fragment {
              * 8:9	    Accelerometer range (0=2G, 1=4G, 2=8G, 3=16G)
              * 10:15   Not used
              */
-            enable.setValue(0b1000111000, BluetoothGattCharacteristic.FORMAT_UINT16, 0);
-            mGatt.writeCharacteristic(enable);
+            mEnable.setValue(0b1000111000, BluetoothGattCharacteristic.FORMAT_UINT16, 0);
+            mGatt.writeCharacteristic(mEnable);
         }
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
-            mRead = mMovService.getCharacteristic(UUID.fromString("F000AA81-0451-4000-B000-000000000000"));
-            if (mRead == null) {
-                Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
-                getActivity().finish();
+            if (characteristic == mEnable) {
+                mPeriod = mMovService.getCharacteristic(UUID.fromString("F000AA83-0451-4000-B000-000000000000"));
+                if (mPeriod == null) {
+                    Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
+                    getActivity().finish();
+                }
+                mPeriod.setValue(0x0A, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                mGatt.writeCharacteristic(mPeriod);
+            } else if (characteristic == mPeriod) {
+                mRead = mMovService.getCharacteristic(UUID.fromString("F000AA81-0451-4000-B000-000000000000"));
+                if (mRead == null) {
+                    Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
+                    getActivity().finish();
+                }
+                mGatt.readCharacteristic(mRead);
             }
-            mGatt.readCharacteristic(mRead);
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
-            double[] result = Util.convertAccel(characteristic.getValue());
-            final String text = "AccelX: " + result[0] + " AccelY: " + result[1] + " AccelZ: " + result[2];
+            final double[] result = Util.convertAccel(characteristic.getValue());
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mHex.setText(text);
+                    if (isAdded()) {
+                        mXAxis.setText(String.format(getString(R.string.xAxis), result[0]));
+                        mYAxis.setText(String.format(getString(R.string.yAxis), result[1]));
+                        mZAxis.setText(String.format(getString(R.string.zAxis), result[2]));
+                    }
                 }
             });
             mGatt.readCharacteristic(mRead);
@@ -161,7 +174,9 @@ public class DeviceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_device, container, false);
-        mHex = (TextView) layout.findViewById(R.id.tvHex);
+        mXAxis = (TextView) layout.findViewById(R.id.tvXAxis);
+        mYAxis = (TextView) layout.findViewById(R.id.tvYAxis);
+        mZAxis = (TextView) layout.findViewById(R.id.tvZAxis);
         return layout;
     }
 
