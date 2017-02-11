@@ -5,7 +5,11 @@
     <string name="service_not_found">GATT service not found - incompatible device</string>
     <string name="characteristic_not_found">GATT characteristic not found - incompatible device</string>
     <string name="acceleration">Acceleration</string>
-    <string name="xAxis">X: %.2f</string>
-    <string name="yAxis">Y: %.2f</string>
-    <string name="zAxis">Z: %.2f</string>
+    <string name="xAxis">%.2f</string>
+    <string name="yAxis">%.2f</string>
+    <string name="zAxis">%.2f</string>
+    <string name="recording_start">Start recording</string>
+    <string name="recording_stop">Stop recording</string>
+    <string name="recording_export">Export recording</string>
+    <string name="recording">Recording</string>
 </resources>

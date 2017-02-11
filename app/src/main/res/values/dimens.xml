@@ -5,4 +5,5 @@
     <dimen name="text_margin">16dp</dimen>
 
     <dimen name="btn_flat_corner_radius">1dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
 </resources>
