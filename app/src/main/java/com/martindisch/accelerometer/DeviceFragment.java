@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,9 +161,12 @@ public class DeviceFragment extends Fragment {
                 @Override
                 public void run() {
                     if (isAdded()) {
-                        mXAxis.setText(String.format(getString(R.string.xAxis), result[0]));
-                        mYAxis.setText(String.format(getString(R.string.yAxis), result[1]));
-                        mZAxis.setText(String.format(getString(R.string.zAxis), result[2]));
+                        mXAxis.setText(String.format(getString(R.string.xAxis), Math.abs(result[0])));
+                        mYAxis.setText(String.format(getString(R.string.yAxis), Math.abs(result[1])));
+                        mZAxis.setText(String.format(getString(R.string.zAxis), Math.abs(result[2])));
+                        mXAxis.setTextColor(ContextCompat.getColor(getActivity(), result[0] < 0 ? R.color.red_light : R.color.green_light));
+                        mYAxis.setTextColor(ContextCompat.getColor(getActivity(), result[1] < 0 ? R.color.red_light : R.color.green_light));
+                        mZAxis.setTextColor(ContextCompat.getColor(getActivity(), result[2] < 0 ? R.color.red_light : R.color.green_light));
                     }
                 }
             });
