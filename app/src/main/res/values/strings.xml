@@ -13,4 +13,9 @@
     <string name="recording_export">Export recording</string>
     <string name="recording">Recording</string>
     <string name="none">-</string>
+    <string name="combined">Combined</string>
+    <string name="x">X</string>
+    <string name="y">Y</string>
+    <string name="z">Z</string>
+    <string name="max">Maximum: %.2f g</string>
 </resources>

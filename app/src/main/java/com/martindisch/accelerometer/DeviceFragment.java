@@ -18,7 +18,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -39,8 +45,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private BluetoothGattService mMovService;
     private BluetoothGattCharacteristic mRead, mEnable, mPeriod;
 
-    private TextView mXAxis, mYAxis, mZAxis;
+    private TextView mXAxis, mYAxis, mZAxis, mMax;
     private Button mStart, mStop, mExport;
+    private LineChart mChart;
 
     /**
      * Mandatory empty constructor.
@@ -186,9 +193,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                         mXAxis.setText(String.format(getString(R.string.xAxis), Math.abs(result[0])));
                         mYAxis.setText(String.format(getString(R.string.yAxis), Math.abs(result[1])));
                         mZAxis.setText(String.format(getString(R.string.zAxis), Math.abs(result[2])));
-                        mXAxis.setTextColor(ContextCompat.getColor(getActivity(), result[0] < 0 ? R.color.red_light : R.color.green_light));
-                        mYAxis.setTextColor(ContextCompat.getColor(getActivity(), result[1] < 0 ? R.color.red_light : R.color.green_light));
-                        mZAxis.setTextColor(ContextCompat.getColor(getActivity(), result[2] < 0 ? R.color.red_light : R.color.green_light));
+                        mXAxis.setTextColor(ContextCompat.getColor(getActivity(), result[0] < 0 ? R.color.red : R.color.green));
+                        mYAxis.setTextColor(ContextCompat.getColor(getActivity(), result[1] < 0 ? R.color.red : R.color.green));
+                        mZAxis.setTextColor(ContextCompat.getColor(getActivity(), result[2] < 0 ? R.color.red : R.color.green));
                     }
                 }
             });
@@ -218,6 +225,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         mExport.setEnabled(false);
         mStop.setEnabled(true);
         mIsRecording = true;
+        mMax.setVisibility(View.INVISIBLE);
 
         mRecording = new LinkedList<>();
     }
@@ -229,7 +237,37 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         mExport.setEnabled(true);
         mIsRecording = false;
 
-        // TODO: update graph
+        ArrayList<Entry> combined = new ArrayList<>(mRecording.size());
+        ArrayList<Entry> x = new ArrayList<>(mRecording.size());
+        ArrayList<Entry> y = new ArrayList<>(mRecording.size());
+        ArrayList<Entry> z = new ArrayList<>(mRecording.size());
+        int i = 0;
+        double max = 0;
+        for (Measurement m : mRecording) {
+            combined.add(new Entry(i, (float) m.getCombined()));
+            if (m.getCombined() > max) max = m.getCombined();
+            x.add(new Entry(i, (float) m.getX()));
+            y.add(new Entry(i, (float) m.getY()));
+            z.add(new Entry(i++, (float) m.getZ()));
+        }
+        LineDataSet sCombined = new LineDataSet(combined, getString(R.string.combined));
+        LineDataSet sX = new LineDataSet(x, getString(R.string.x));
+        LineDataSet sY = new LineDataSet(y, getString(R.string.y));
+        LineDataSet sZ = new LineDataSet(z, getString(R.string.z));
+        sCombined.setDrawCircles(false);
+        sX.setDrawCircles(false);
+        sY.setDrawCircles(false);
+        sZ.setDrawCircles(false);
+        sCombined.setColor(ContextCompat.getColor(getActivity(), R.color.red));
+        sX.setColor(ContextCompat.getColor(getActivity(), R.color.green));
+        sY.setColor(ContextCompat.getColor(getActivity(), R.color.light_green));
+        sZ.setColor(ContextCompat.getColor(getActivity(), R.color.lime));
+        LineData lineData = new LineData(sCombined, sX, sY, sZ);
+        mChart.setData(lineData);
+        mChart.invalidate();
+
+        mMax.setText(String.format(getString(R.string.max), max));
+        mMax.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -239,9 +277,18 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         mXAxis = (TextView) layout.findViewById(R.id.tvXAxis);
         mYAxis = (TextView) layout.findViewById(R.id.tvYAxis);
         mZAxis = (TextView) layout.findViewById(R.id.tvZAxis);
+        mMax = (TextView) layout.findViewById(R.id.tvMax);
         mStart = (Button) layout.findViewById(R.id.bStart);
         mStop = (Button) layout.findViewById(R.id.bStop);
         mExport = (Button) layout.findViewById(R.id.bExport);
+        mChart = (LineChart) layout.findViewById(R.id.chart);
+
+        mChart.setDescription(null);
+        mChart.setHighlightPerDragEnabled(false);
+        mChart.setHighlightPerTapEnabled(false);
+        mChart.setPinchZoom(true);
+        mChart.getLegend().setDrawInside(true);
+        mChart.setExtraTopOffset(10);
 
         mStart.setOnClickListener(this);
         mStop.setOnClickListener(this);

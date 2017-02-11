@@ -5,8 +5,10 @@
     <color name="colorAccent">#FF4081</color>
     <color name="flat_pressed">#66999999</color>
 
-    <color name="green_light">#4CAF50</color>
-    <color name="red_light">#F44336</color>
+    <color name="green">#4CAF50</color>
+    <color name="red">#F44336</color>
     <color name="teal">#009688</color>
     <color name="deep_purple">#673AB7</color>
+    <color name="light_green">#8BC34A</color>
+    <color name="lime">#CDDC39</color>
 </resources>
