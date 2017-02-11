@@ -14,18 +14,25 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
  * Fragment showing data for a connected device.
  */
-public class DeviceFragment extends Fragment {
+public class DeviceFragment extends Fragment implements View.OnClickListener {
 
     private static final String ARG_ADDRESS = "address";
     private String mAddress;
+    private boolean mIsRecording = false;
+    private LinkedList<Measurement> mRecording;
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mGatt;
@@ -33,6 +40,7 @@ public class DeviceFragment extends Fragment {
     private BluetoothGattCharacteristic mRead, mEnable, mPeriod;
 
     private TextView mXAxis, mYAxis, mZAxis;
+    private Button mStart, mStop, mExport;
 
     /**
      * Mandatory empty constructor.
@@ -74,6 +82,7 @@ public class DeviceFragment extends Fragment {
 
     @Override
     public void onPause() {
+        stopRecording();
         mGatt.disconnect();
         super.onPause();
     }
@@ -93,11 +102,15 @@ public class DeviceFragment extends Fragment {
     }
 
     private BluetoothGattCallback mCallback = new BluetoothGattCallback() {
+        double result[];
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS", Locale.getDefault());
+
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
             switch (newState) {
                 case BluetoothGatt.STATE_CONNECTED:
+                    // as soon as we're connected, discover services
                     mGatt.discoverServices();
                     break;
                 case BluetoothGatt.STATE_DISCONNECTED:
@@ -109,6 +122,7 @@ public class DeviceFragment extends Fragment {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+            // as soon as services are discovered, acquire characteristic and try enabling
             mMovService = mGatt.getService(UUID.fromString("F000AA80-0451-4000-B000-000000000000"));
             mEnable = mMovService.getCharacteristic(UUID.fromString("F000AA82-0451-4000-B000-000000000000"));
             if (mEnable == null) {
@@ -136,6 +150,7 @@ public class DeviceFragment extends Fragment {
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
             if (characteristic == mEnable) {
+                // if enable was successful, set the sensor period to the lowest value
                 mPeriod = mMovService.getCharacteristic(UUID.fromString("F000AA83-0451-4000-B000-000000000000"));
                 if (mPeriod == null) {
                     Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
@@ -144,6 +159,7 @@ public class DeviceFragment extends Fragment {
                 mPeriod.setValue(0x0A, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                 mGatt.writeCharacteristic(mPeriod);
             } else if (characteristic == mPeriod) {
+                // if setting sensor period was successful, start polling for sensor values
                 mRead = mMovService.getCharacteristic(UUID.fromString("F000AA81-0451-4000-B000-000000000000"));
                 if (mRead == null) {
                     Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
@@ -156,11 +172,17 @@ public class DeviceFragment extends Fragment {
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
-            final double[] result = Util.convertAccel(characteristic.getValue());
+            // convert raw byte array to G unit values for xyz axes
+            result = Util.convertAccel(characteristic.getValue());
+            if (mIsRecording) {
+                Measurement measurement = new Measurement(result[0], result[1], result[2], formatter.format(Calendar.getInstance().getTime()));
+                mRecording.add(measurement);
+            }
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (isAdded()) {
+                        // update current acceleration readings
                         mXAxis.setText(String.format(getString(R.string.xAxis), Math.abs(result[0])));
                         mYAxis.setText(String.format(getString(R.string.yAxis), Math.abs(result[1])));
                         mZAxis.setText(String.format(getString(R.string.zAxis), Math.abs(result[2])));
@@ -170,9 +192,45 @@ public class DeviceFragment extends Fragment {
                     }
                 }
             });
+            // poll for next values
             mGatt.readCharacteristic(mRead);
         }
     };
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.bStart:
+                startRecording();
+                break;
+            case R.id.bStop:
+                stopRecording();
+                break;
+            case R.id.bExport:
+                // TODO: create CSV data and share intent
+                break;
+        }
+    }
+
+    private void startRecording() {
+        // update UI
+        mStart.setEnabled(false);
+        mExport.setEnabled(false);
+        mStop.setEnabled(true);
+        mIsRecording = true;
+
+        mRecording = new LinkedList<>();
+    }
+
+    private void stopRecording() {
+        // update UI
+        mStop.setEnabled(false);
+        mStart.setEnabled(true);
+        mExport.setEnabled(true);
+        mIsRecording = false;
+
+        // TODO: update graph
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -181,7 +239,13 @@ public class DeviceFragment extends Fragment {
         mXAxis = (TextView) layout.findViewById(R.id.tvXAxis);
         mYAxis = (TextView) layout.findViewById(R.id.tvYAxis);
         mZAxis = (TextView) layout.findViewById(R.id.tvZAxis);
+        mStart = (Button) layout.findViewById(R.id.bStart);
+        mStop = (Button) layout.findViewById(R.id.bStop);
+        mExport = (Button) layout.findViewById(R.id.bExport);
+
+        mStart.setOnClickListener(this);
+        mStop.setOnClickListener(this);
+        mExport.setOnClickListener(this);
         return layout;
     }
-
 }
