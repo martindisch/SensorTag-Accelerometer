@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="@string/xAxis" />
+                    android:text="@string/none" />
 
                 <TextView
                     android:id="@+id/tvYAxis"
@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="@string/yAxis" />
+                    android:text="@string/none" />
 
                 <TextView
                     android:id="@+id/tvZAxis"
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="@string/zAxis" />
+                    android:text="@string/none" />
             </LinearLayout>
         </LinearLayout>
 
