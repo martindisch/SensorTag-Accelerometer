@@ -1,5 +1,7 @@
 package com.martindisch.accelerometer;
 
+import java.util.List;
+
 /**
  * Class with helper functions.
  */
@@ -37,5 +39,22 @@ public class Util {
         int y = (value[9] << 8) + value[8];
         int z = (value[11] << 8) + value[10];
         return new double[]{((x / SCALE) * -1), y / SCALE, ((z / SCALE) * -1)};
+    }
+
+    /**
+     * Returns a String containing the content of a CSV file representing
+     * the list of {@link Measurement} given.
+     *
+     * @param recording the list of measurements
+     * @return the CSV String representing the measurements
+     */
+    public static String recordingToCSV(List<Measurement> recording) {
+        String csv = "time,x,y,z,combined\n";
+        for (Measurement measurement : recording) {
+            csv += measurement.getTime() + "," + measurement.getX()
+                    + "," + measurement.getY() + "," + measurement.getZ()
+                    + "," + measurement.getCombined() + "\n";
+        }
+        return csv;
     }
 }
