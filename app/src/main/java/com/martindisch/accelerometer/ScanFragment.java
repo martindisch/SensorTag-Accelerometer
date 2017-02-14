@@ -95,7 +95,7 @@ public class ScanFragment extends Fragment {
      * Initiates the scan for BLE devices according to the API level.
      */
     private void startScan() {
-        mListener.onShowProgress();
+        if (mRecyclerViewAdapter.getSize() == 0) mListener.onShowProgress();
         if (Build.VERSION.SDK_INT < 21) {
             mBluetoothAdapter.startLeScan(mLeScanCallback);
         } else {

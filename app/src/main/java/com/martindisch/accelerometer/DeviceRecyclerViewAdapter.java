@@ -74,4 +74,13 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
             notifyItemInserted(mAddresses.indexOf(address));
         }
     }
+
+    /**
+     * Returns the number of devices shown.
+     *
+     * @return the number of devices
+     */
+    public int getSize() {
+        return mAddresses.size();
+    }
 }
