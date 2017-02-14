@@ -267,7 +267,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private void deviceDisconnected() {
         stopRecording();
         mStart.setEnabled(false);
-        mGatt.disconnect();
+        if (mGatt != null) mGatt.disconnect();
     }
 
     /**
