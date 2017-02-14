@@ -46,6 +46,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private String mAddress;
     private boolean mIsRecording = false;
     private LinkedList<Measurement> mRecording;
+    private OnStatusListener mListener;
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mGatt;
@@ -111,6 +112,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), R.string.state_off, Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
+        mListener.onShowProgress();
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         mGatt = device.connectGatt(getActivity(), false, mCallback);
     }
@@ -180,6 +182,12 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     getActivity().finish();
                 }
                 mGatt.readCharacteristic(mRead);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.onHideProgress();
+                    }
+                });
             }
         }
 
@@ -323,5 +331,16 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         mStop.setOnClickListener(this);
         mExport.setOnClickListener(this);
         return layout;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnStatusListener) {
+            mListener = (OnStatusListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnStatusListener");
+        }
     }
 }
