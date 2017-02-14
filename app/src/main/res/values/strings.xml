@@ -19,4 +19,9 @@
     <string name="z">Z</string>
     <string name="max">Maximum: %.2f g</string>
     <string name="error_file">Error while writing file</string>
+    <string name="about_title">About</string>
+    <string name="about_message">Copyright © 2017 Martin Disch\n\nAvailable under the MIT license.</string>
+    <string name="github">GitHub</string>
+    <string name="close">Close</string>
+    <string name="github_url">https://github.com/martindisch/SensorTag-Accelerometer</string>
 </resources>
