@@ -64,6 +64,11 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
      * @param address the MAC address of the new device
      */
     public void addDevice(String address) {
+        // after the first device has been discovered, disable the spinning
+        // status indicator that is partly hiding the element
+        if (mAddresses.size() == 0) mListener.onStopScan();
+
+        // add the device to list if it doesn't exist
         if (!mAddresses.contains(address)) {
             mAddresses.add(address);
             notifyItemInserted(mAddresses.indexOf(address));
