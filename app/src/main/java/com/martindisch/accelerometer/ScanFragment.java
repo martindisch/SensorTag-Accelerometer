@@ -110,7 +110,6 @@ public class ScanFragment extends Fragment {
      * Stops the scan using the proper functions for the API level.
      */
     private void stopScan() {
-        mListener.onHideProgress();
         if (mBluetoothAdapter.isEnabled()) {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -157,8 +156,6 @@ public class ScanFragment extends Fragment {
             if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(getActivity(), R.string.state_off, Toast.LENGTH_SHORT).show();
                 getActivity().finish();
-            } else if (resultCode == Activity.RESULT_OK) {
-                startScan();
             }
         }
     }
