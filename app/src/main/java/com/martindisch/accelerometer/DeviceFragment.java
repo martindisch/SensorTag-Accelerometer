@@ -221,10 +221,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 stopRecording();
                 break;
             case R.id.bExport:
-                File outputDir = getActivity().getCacheDir();
                 try {
                     // create and write output file in cache directory
-                    File outputFile = File.createTempFile("recording", "csv", outputDir);
+                    File outputFile = new File(getActivity().getCacheDir(), "recording.csv");
                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputFile));
                     writer.write(Util.recordingToCSV(mRecording));
                     writer.close();
@@ -237,7 +236,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     shareIntent.setAction(Intent.ACTION_SEND);
                     // temp permission for receiving app to read this file
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    shareIntent.setDataAndType(contentUri, getActivity().getContentResolver().getType(contentUri));
+                    shareIntent.setType("text/csv");
                     shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                     startActivity(Intent.createChooser(shareIntent, "Choose an app"));
                 } catch (IOException e) {

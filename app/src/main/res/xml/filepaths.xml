@@ -2,5 +2,5 @@
 <paths>
     <cache-path
         name="shared_recording"
-        path="recording/"/>
+        path="" />
 </paths>
