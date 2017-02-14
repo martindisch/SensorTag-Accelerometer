@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity implements ScanFragment.OnLi
     }
 
     @Override
-    public void onStartScan() {
+    public void onShowProgress() {
         mSwipeContainer.setRefreshing(true);
     }
 
     @Override
-    public void onStopScan() {
+    public void onHideProgress() {
         mSwipeContainer.setRefreshing(false);
     }
 }

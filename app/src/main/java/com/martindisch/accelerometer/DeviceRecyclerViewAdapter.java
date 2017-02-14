@@ -66,7 +66,7 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
     public void addDevice(String address) {
         // after the first device has been discovered, disable the spinning
         // status indicator that is partly hiding the element
-        if (mAddresses.size() == 0) mListener.onStopScan();
+        if (mAddresses.size() == 0) mListener.onHideProgress();
 
         // add the device to list if it doesn't exist
         if (!mAddresses.contains(address)) {

@@ -95,7 +95,7 @@ public class ScanFragment extends Fragment {
      * Initiates the scan for BLE devices according to the API level.
      */
     private void startScan() {
-        mListener.onStartScan();
+        mListener.onShowProgress();
         if (Build.VERSION.SDK_INT < 21) {
             mBluetoothAdapter.startLeScan(mLeScanCallback);
         } else {
@@ -110,7 +110,7 @@ public class ScanFragment extends Fragment {
      * Stops the scan using the proper functions for the API level.
      */
     private void stopScan() {
-        mListener.onStopScan();
+        mListener.onHideProgress();
         if (mBluetoothAdapter.isEnabled()) {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -176,8 +176,8 @@ public class ScanFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(String address);
 
-        void onStartScan();
+        void onShowProgress();
 
-        void onStopScan();
+        void onHideProgress();
     }
 }
