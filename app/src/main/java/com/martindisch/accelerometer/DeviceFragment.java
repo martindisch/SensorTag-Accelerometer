@@ -258,43 +258,45 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     }
 
     private void stopRecording() {
-        // update UI
-        mStop.setEnabled(false);
-        mStart.setEnabled(true);
-        mExport.setEnabled(true);
-        mIsRecording = false;
+        if (mIsRecording) {
+            // update UI
+            mStop.setEnabled(false);
+            mStart.setEnabled(true);
+            mExport.setEnabled(true);
+            mIsRecording = false;
 
-        ArrayList<Entry> combined = new ArrayList<>(mRecording.size());
-        ArrayList<Entry> x = new ArrayList<>(mRecording.size());
-        ArrayList<Entry> y = new ArrayList<>(mRecording.size());
-        ArrayList<Entry> z = new ArrayList<>(mRecording.size());
-        int i = 0;
-        double max = 0;
-        for (Measurement m : mRecording) {
-            combined.add(new Entry(i, (float) m.getCombined()));
-            if (m.getCombined() > max) max = m.getCombined();
-            x.add(new Entry(i, (float) m.getX()));
-            y.add(new Entry(i, (float) m.getY()));
-            z.add(new Entry(i++, (float) m.getZ()));
+            ArrayList<Entry> combined = new ArrayList<>(mRecording.size());
+            ArrayList<Entry> x = new ArrayList<>(mRecording.size());
+            ArrayList<Entry> y = new ArrayList<>(mRecording.size());
+            ArrayList<Entry> z = new ArrayList<>(mRecording.size());
+            int i = 0;
+            double max = 0;
+            for (Measurement m : mRecording) {
+                combined.add(new Entry(i, (float) m.getCombined()));
+                if (m.getCombined() > max) max = m.getCombined();
+                x.add(new Entry(i, (float) m.getX()));
+                y.add(new Entry(i, (float) m.getY()));
+                z.add(new Entry(i++, (float) m.getZ()));
+            }
+            LineDataSet sCombined = new LineDataSet(combined, getString(R.string.combined));
+            LineDataSet sX = new LineDataSet(x, getString(R.string.x));
+            LineDataSet sY = new LineDataSet(y, getString(R.string.y));
+            LineDataSet sZ = new LineDataSet(z, getString(R.string.z));
+            sCombined.setDrawCircles(false);
+            sX.setDrawCircles(false);
+            sY.setDrawCircles(false);
+            sZ.setDrawCircles(false);
+            sCombined.setColor(ContextCompat.getColor(getActivity(), R.color.red));
+            sX.setColor(ContextCompat.getColor(getActivity(), R.color.green));
+            sY.setColor(ContextCompat.getColor(getActivity(), R.color.light_green));
+            sZ.setColor(ContextCompat.getColor(getActivity(), R.color.lime));
+            LineData lineData = new LineData(sCombined, sX, sY, sZ);
+            mChart.setData(lineData);
+            mChart.invalidate();
+
+            mMax.setText(String.format(getString(R.string.max), max));
+            mMax.setVisibility(View.VISIBLE);
         }
-        LineDataSet sCombined = new LineDataSet(combined, getString(R.string.combined));
-        LineDataSet sX = new LineDataSet(x, getString(R.string.x));
-        LineDataSet sY = new LineDataSet(y, getString(R.string.y));
-        LineDataSet sZ = new LineDataSet(z, getString(R.string.z));
-        sCombined.setDrawCircles(false);
-        sX.setDrawCircles(false);
-        sY.setDrawCircles(false);
-        sZ.setDrawCircles(false);
-        sCombined.setColor(ContextCompat.getColor(getActivity(), R.color.red));
-        sX.setColor(ContextCompat.getColor(getActivity(), R.color.green));
-        sY.setColor(ContextCompat.getColor(getActivity(), R.color.light_green));
-        sZ.setColor(ContextCompat.getColor(getActivity(), R.color.lime));
-        LineData lineData = new LineData(sCombined, sX, sY, sZ);
-        mChart.setData(lineData);
-        mChart.invalidate();
-
-        mMax.setText(String.format(getString(R.string.max), max));
-        mMax.setVisibility(View.VISIBLE);
     }
 
     @Override
