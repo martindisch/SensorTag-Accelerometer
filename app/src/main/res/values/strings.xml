@@ -18,4 +18,5 @@
     <string name="y">Y</string>
     <string name="z">Z</string>
     <string name="max">Maximum: %.2f g</string>
+    <string name="error_file">Error while writing file</string>
 </resources>

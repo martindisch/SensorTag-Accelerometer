@@ -97,8 +97,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onPause() {
-        stopRecording();
-        mGatt.disconnect();
+        deviceDisconnected();
         super.onPause();
     }
 
@@ -185,7 +184,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mListener.onHideProgress();
+                        deviceConnected();
                     }
                 });
             }
@@ -248,12 +247,32 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                     startActivity(Intent.createChooser(shareIntent, "Choose an app"));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Toast.makeText(getActivity(), R.string.error_file, Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
     }
 
+    /**
+     * Called when the device has been fully connected.
+     */
+    private void deviceConnected() {
+        mListener.onHideProgress();
+        mStart.setEnabled(true);
+    }
+
+    /**
+     * Called when the device should be disconnected.
+     */
+    private void deviceDisconnected() {
+        stopRecording();
+        mStart.setEnabled(false);
+        mGatt.disconnect();
+    }
+
+    /**
+     * Starts the recording and updates the UI to reflect that.
+     */
     private void startRecording() {
         // update UI
         mStart.setEnabled(false);
@@ -265,6 +284,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         mRecording = new LinkedList<>();
     }
 
+    /**
+     * Stops the recording and updates the UI to reflect that.
+     */
     private void stopRecording() {
         if (mIsRecording) {
             // update UI
