@@ -128,9 +128,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     // as soon as we're connected, discover services
                     mGatt.discoverServices();
                     break;
-                case BluetoothGatt.STATE_DISCONNECTED:
-                    // TODO: return to ScanFragment
-                    break;
             }
         }
 
