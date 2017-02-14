@@ -10,7 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements ScanFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements OnStatusListener {
 
     private Fragment mCurrentFragment;
     private FragmentManager mFragmentManager;

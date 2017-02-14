@@ -34,7 +34,7 @@ public class ScanFragment extends Fragment {
     private BluetoothLeScanner mLeScanner;
     private BluetoothAdapter.LeScanCallback mLeScanCallback;
     private ScanCallback mScanCallback;
-    private OnListFragmentInteractionListener mListener;
+    private OnStatusListener mListener;
     private DeviceRecyclerViewAdapter mRecyclerViewAdapter;
 
     /**
@@ -139,15 +139,14 @@ public class ScanFragment extends Fragment {
         return view;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnStatusListener) {
+            mListener = (OnStatusListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnStatusListener");
         }
     }
 
@@ -168,16 +167,5 @@ public class ScanFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    /**
-     * Interface for {@link DeviceRecyclerViewAdapter} callbacks.
-     */
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(String address);
-
-        void onShowProgress();
-
-        void onHideProgress();
     }
 }

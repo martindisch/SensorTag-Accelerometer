@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<String> mAddresses;
-    private final ScanFragment.OnListFragmentInteractionListener mListener;
+    private OnStatusListener mListener;
 
-    public DeviceRecyclerViewAdapter(ScanFragment.OnListFragmentInteractionListener listener) {
+    public DeviceRecyclerViewAdapter(OnStatusListener listener) {
         mAddresses = new ArrayList<>();
         mListener = listener;
     }
