@@ -119,6 +119,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private BluetoothGattCallback mCallback = new BluetoothGattCallback() {
         double result[];
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS", Locale.getDefault());
+        Calendar previousRead, currentTime;
 
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -177,6 +178,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
                     getActivity().finish();
                 }
+                previousRead = Calendar.getInstance();
                 mGatt.readCharacteristic(mRead);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -194,6 +196,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             result = Util.convertAccel(characteristic.getValue());
             if (mIsRecording) {
                 Measurement measurement = new Measurement(result[0], result[1], result[2], formatter.format(Calendar.getInstance().getTime()));
+
                 mRecording.add(measurement);
             }
             getActivity().runOnUiThread(new Runnable() {
@@ -211,6 +214,16 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 }
             });
             // poll for next values
+            currentTime = Calendar.getInstance();
+            long diff = currentTime.getTimeInMillis() - previousRead.getTimeInMillis();
+            if (diff < 100) {
+                try {
+                    Thread.sleep(100 - diff);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            previousRead = currentTime;
             mGatt.readCharacteristic(mRead);
         }
     };
