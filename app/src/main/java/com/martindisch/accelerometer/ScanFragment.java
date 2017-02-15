@@ -132,6 +132,7 @@ public class ScanFragment extends Fragment {
         Context context = view.getContext();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setHasFixedSize(true);
         mRecyclerViewAdapter = new DeviceRecyclerViewAdapter(mListener);
         recyclerView.setAdapter(mRecyclerViewAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null, true));
