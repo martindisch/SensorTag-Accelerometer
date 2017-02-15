@@ -196,7 +196,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             result = Util.convertAccel(characteristic.getValue());
             if (mIsRecording) {
                 Measurement measurement = new Measurement(result[0], result[1], result[2], formatter.format(Calendar.getInstance().getTime()));
-
                 mRecording.add(measurement);
             }
             getActivity().runOnUiThread(new Runnable() {
@@ -223,7 +222,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
             }
-            previousRead = currentTime;
+            previousRead = Calendar.getInstance();
             mGatt.readCharacteristic(mRead);
         }
     };
