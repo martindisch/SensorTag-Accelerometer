@@ -180,12 +180,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 }
                 previousRead = Calendar.getInstance();
                 mGatt.readCharacteristic(mRead);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        deviceConnected();
-                    }
-                });
+                deviceConnected();
             }
         }
 

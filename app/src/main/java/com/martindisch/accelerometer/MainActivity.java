@@ -56,12 +56,22 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
 
     @Override
     public void onShowProgress() {
-        mSwipeContainer.setRefreshing(true);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeContainer.setRefreshing(true);
+            }
+        });
     }
 
     @Override
     public void onHideProgress() {
-        mSwipeContainer.setRefreshing(false);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeContainer.setRefreshing(false);
+            }
+        });
     }
 
     @Override
