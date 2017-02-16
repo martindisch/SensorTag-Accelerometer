@@ -262,7 +262,12 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
      */
     private void deviceConnected() {
         mListener.onHideProgress();
-        mStart.setEnabled(true);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mStart.setEnabled(true);
+            }
+        });
     }
 
     /**
