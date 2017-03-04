@@ -47,6 +47,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private boolean mIsRecording = false;
     private LinkedList<Measurement> mRecording;
     private OnStatusListener mListener;
+    private Calendar previousRead;
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mGatt;
@@ -119,7 +120,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private BluetoothGattCallback mCallback = new BluetoothGattCallback() {
         double result[];
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS", Locale.getDefault());
-        Calendar previousRead, currentTime;
+        Calendar currentTime;
 
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -268,6 +269,32 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 mStart.setEnabled(true);
             }
         });
+
+        // start connection watcher thread
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean hasConnection = true;
+                while (hasConnection) {
+                    long diff = Calendar.getInstance().getTimeInMillis() - previousRead.getTimeInMillis();
+                    if (diff > 2000) {
+                        hasConnection = false;
+                        mStart.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), R.string.connection_lost, Toast.LENGTH_LONG).show();
+                                deviceDisconnected();
+                            }
+                        });
+                    }
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     /**
@@ -304,37 +331,41 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             mExport.setEnabled(true);
             mIsRecording = false;
 
-            ArrayList<Entry> combined = new ArrayList<>(mRecording.size());
-            ArrayList<Entry> x = new ArrayList<>(mRecording.size());
-            ArrayList<Entry> y = new ArrayList<>(mRecording.size());
-            ArrayList<Entry> z = new ArrayList<>(mRecording.size());
-            int i = 0;
-            double max = 0;
-            for (Measurement m : mRecording) {
-                combined.add(new Entry(i, (float) m.getCombined()));
-                if (m.getCombined() > max) max = m.getCombined();
-                x.add(new Entry(i, (float) m.getX()));
-                y.add(new Entry(i, (float) m.getY()));
-                z.add(new Entry(i++, (float) m.getZ()));
-            }
-            LineDataSet sCombined = new LineDataSet(combined, getString(R.string.combined));
-            LineDataSet sX = new LineDataSet(x, getString(R.string.x));
-            LineDataSet sY = new LineDataSet(y, getString(R.string.y));
-            LineDataSet sZ = new LineDataSet(z, getString(R.string.z));
-            sCombined.setDrawCircles(false);
-            sX.setDrawCircles(false);
-            sY.setDrawCircles(false);
-            sZ.setDrawCircles(false);
-            sCombined.setColor(ContextCompat.getColor(getActivity(), R.color.red));
-            sX.setColor(ContextCompat.getColor(getActivity(), R.color.green));
-            sY.setColor(ContextCompat.getColor(getActivity(), R.color.light_green));
-            sZ.setColor(ContextCompat.getColor(getActivity(), R.color.lime));
-            LineData lineData = new LineData(sCombined, sX, sY, sZ);
-            mChart.setData(lineData);
-            mChart.invalidate();
+            if (mRecording.size() > 0) {
+                ArrayList<Entry> combined = new ArrayList<>(mRecording.size());
+                ArrayList<Entry> x = new ArrayList<>(mRecording.size());
+                ArrayList<Entry> y = new ArrayList<>(mRecording.size());
+                ArrayList<Entry> z = new ArrayList<>(mRecording.size());
+                int i = 0;
+                double max = 0;
+                for (Measurement m : mRecording) {
+                    combined.add(new Entry(i, (float) m.getCombined()));
+                    if (m.getCombined() > max) max = m.getCombined();
+                    x.add(new Entry(i, (float) m.getX()));
+                    y.add(new Entry(i, (float) m.getY()));
+                    z.add(new Entry(i++, (float) m.getZ()));
+                }
+                LineDataSet sCombined = new LineDataSet(combined, getString(R.string.combined));
+                LineDataSet sX = new LineDataSet(x, getString(R.string.x));
+                LineDataSet sY = new LineDataSet(y, getString(R.string.y));
+                LineDataSet sZ = new LineDataSet(z, getString(R.string.z));
+                sCombined.setDrawCircles(false);
+                sX.setDrawCircles(false);
+                sY.setDrawCircles(false);
+                sZ.setDrawCircles(false);
+                sCombined.setColor(ContextCompat.getColor(getActivity(), R.color.red));
+                sX.setColor(ContextCompat.getColor(getActivity(), R.color.green));
+                sY.setColor(ContextCompat.getColor(getActivity(), R.color.light_green));
+                sZ.setColor(ContextCompat.getColor(getActivity(), R.color.lime));
+                LineData lineData = new LineData(sCombined, sX, sY, sZ);
+                mChart.setData(lineData);
+                mChart.invalidate();
 
-            mMax.setText(String.format(getString(R.string.max), max));
-            mMax.setVisibility(View.VISIBLE);
+                mMax.setText(String.format(getString(R.string.max), max));
+                mMax.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(getContext(), R.string.no_data, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

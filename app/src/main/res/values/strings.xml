@@ -24,4 +24,6 @@
     <string name="github">GitHub</string>
     <string name="close">Close</string>
     <string name="github_url">https://github.com/martindisch/SensorTag-Accelerometer</string>
+    <string name="connection_lost">Lost connection with SensorTag</string>
+    <string name="no_data">There is no recorded data</string>
 </resources>
