@@ -225,7 +225,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             case R.id.bExport:
                 try {
                     // create and write output file in cache directory
-                    File outputFile = new File(getActivity().getCacheDir(), "recording" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(Calendar.getInstance().getTime()) + ".csv");
+                    File outputFile = new File(getActivity().getCacheDir(), "recording" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()) + ".csv");
                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputFile));
                     writer.write(Util.recordingToCSV(mRecording));
                     writer.close();
