@@ -120,7 +120,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private BluetoothGattCallback mCallback = new BluetoothGattCallback() {
         double result[];
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS", Locale.getDefault());
-        Calendar currentTime;
 
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -209,15 +208,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 }
             });
             // poll for next values
-            currentTime = Calendar.getInstance();
-            long diff = currentTime.getTimeInMillis() - previousRead.getTimeInMillis();
-            if (diff < 100) {
-                try {
-                    Thread.sleep(100 - diff);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
             previousRead = Calendar.getInstance();
             mGatt.readCharacteristic(mRead);
         }
