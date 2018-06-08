@@ -47,7 +47,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private boolean mIsRecording = false;
     private LinkedList<Measurement> mRecording;
     private OnStatusListener mListener;
-    private Calendar previousRead;
+    private Calendar previousRead, recordingStart;
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mGatt;
@@ -225,7 +225,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             case R.id.bExport:
                 try {
                     // create and write output file in cache directory
-                    File outputFile = new File(getActivity().getCacheDir(), "recording.csv");
+                    File outputFile = new File(getActivity().getCacheDir(), "recording" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(Calendar.getInstance().getTime()) + ".csv");
                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputFile));
                     writer.write(Util.recordingToCSV(mRecording));
                     writer.close();
@@ -308,6 +308,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         mMax.setVisibility(View.INVISIBLE);
 
         mRecording = new LinkedList<>();
+        recordingStart = Calendar.getInstance();
     }
 
     /**
